@@ -95,9 +95,50 @@ Min_button = Button(gui, command = toggleMinTree, text ="False" ,font=("Courier"
 Min_button.place(x=1085, y=560)
 
 
-#parsing data
 
+
+#parsing data
+f = open("road-usroads.mtx", "r")
 #storing tree (adjacency list bc sparse?)
+class
+adjList = {}
+listNode = []
+
+def newNode (node):
+    if node not in listNode:
+        listNode.append(node)
+
+def newEdge (toNode, fromNode, weight):
+    tempEdge = []
+    if toNode in listNode and fromNode in listNode:
+        if toNode not in adjList:
+            tempEdge.append(fromNode, weight)
+            adjList[toNode] = tempEdge
+        elif toNode in adjList:
+            tempEdge.extend(adjList[toNode])
+            tempEdge.append([fromNode, weight])
+            adjList[toNode] = tempEdge
+
+with f:
+    for junk in range (15):
+        next(f)
+    for line in f:
+        #adding all nodes
+        for word in line.split():
+            newNode(int(word))
+
+
+    #adding edges with weight
+    tempData = iter (f.read().split())
+    while True:
+        try:
+            toNode = next (tempData)
+            fromNode = next(tempData)
+            #weight is based on distance
+            weight = abs(int(toNode)-int(fromNode))
+            newEdge (toNode, fromNode, weight)
+        except StopIteration:
+            break
 
 #shortest path defined above
 
