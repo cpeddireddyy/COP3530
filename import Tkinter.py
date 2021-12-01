@@ -98,9 +98,9 @@ Min_button.place(x=1085, y=560)
 
 
 #parsing data
-f = open("road-usroads.mtx", "r")
-#storing tree (adjacency list bc sparse?)
-class
+f = open("road-usroads-test.mtx", "r")      #using test file 
+#storing tree (adjacency list bc sparse)
+#class 
 adjList = {}
 listNode = []
 
@@ -129,10 +129,10 @@ with f:
 
 
     #adding edges with weight
-    tempData = iter (f.read().split())
+    tempData = iter(f.read().split())
     while True:
         try:
-            toNode = next (tempData)
+            toNode = next(tempData)
             fromNode = next(tempData)
             #weight is based on distance
             weight = abs(int(toNode)-int(fromNode))
@@ -143,7 +143,7 @@ with f:
 #shortest path defined above
 
 #min span tree to make secondary tree for "bulldoze" mode
-
+print(len(adjList))
 
 
 
