@@ -1,7 +1,7 @@
 from tkinter import *
 from PIL import Image, ImageTk
 
-#must install pillow and tkinter
+#must install  pillow, and tkinter
 
 nextNode = "---"
 distLeft = "---"
@@ -144,6 +144,34 @@ with f:
 
 #min span tree to make secondary tree for "bulldoze" mode
 print(len(adjList))
+
+
+#making the min spanning tree
+minEdgeList = set()
+def makeMinGraph():
+    #adjList = {fromNode:[[toNode,weight], [toNode, weight]], fromNode:[[toNode,weight], [toNode, weight]], fromNode:[[toNode,weight], [toNode, weight]]}
+    #first make list of edges (src, dest, weight)
+    edgeList = [] #form of [from, to, weight]
+    listSets = []
+    for fromNode in adjList:    #iterates through each List
+        listSets.append([fromNode])
+        for edgePair in adjList[fromNode]:  #iterates through each edge
+            #fromNode, edgePair = [toNode, weight]
+            edgeList.append([fromNode, edgePair[0], edgePair[1]])
+    sorted(edgeList, key=lambda edge: edge[2])
+    #union list of sets for cycle detection
+    for triple in edgeList:
+        for i in range(len(listSets)):
+            if triple[0] in listSets[i]:
+                j = i
+            if triple[1] in listSets[i]:
+                k = i
+        if j != k:
+            listSets[j].union(listSets[k])
+            minEdgeList.add(triple)
+
+
+
 
 
 
