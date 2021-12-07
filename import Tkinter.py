@@ -1,5 +1,7 @@
+import sys
 from tkinter import *
 from PIL import Image, ImageTk
+import heapq
 
 #must install  pillow, and tkinter
 
@@ -94,51 +96,51 @@ bulldoze_label.place(x=630, y=560)
 Min_button = Button(gui, command = toggleMinTree, text ="False" ,font=("Courier", 22), bg="#61aaed", width = 6, height = 2)
 Min_button.place(x=1085, y=560)
 
-
-
-
 #parsing data
-f = open("road-usroads-test.mtx", "r")      #using test file 
+file = open("road-usroads-test.mtx", "r")      #using test file
 #storing tree (adjacency list bc sparse)
-#class 
-adjList = {}
-listNode = []
+#class
+adjList = dict()
+with file:
+    for junk in range(15):
+        next(file)
+    for line in file:
+        nums = line.split()
+        toNode = int(nums[0])
+        fromNode = int(nums[1])
+        weight = abs(fromNode - toNode)
+        tempList = [toNode, weight]
+        if fromNode not in adjList:
+            adjList[fromNode] = []
+        adjList[fromNode].append(tempList)
 
-def newNode (node):
-    if node not in listNode:
-        listNode.append(node)
+#TODO: Dijkstra's Algorithm: return list verts w/ weight
+def dijkstra (adjList, startpoint, endpoint):
+    path = {}
+    dist = {}
+    pq = []
 
-def newEdge (toNode, fromNode, weight):
-    tempEdge = []
-    if toNode in listNode and fromNode in listNode:
-        if toNode not in adjList:
-            tempEdge.append(fromNode, weight)
-            adjList[toNode] = tempEdge
-        elif toNode in adjList:
-            tempEdge.extend(adjList[toNode])
-            tempEdge.append([fromNode, weight])
-            adjList[toNode] = tempEdge
+    #update distance to INF and prev Node to None (-1)
+    for node in adjList:
+        dist[node] = float(sys.maxsize)
+        path[node] = None
 
-with f:
-    for junk in range (15):
-        next(f)
-    for line in f:
-        #adding all nodes
-        for word in line.split():
-            newNode(int(word))
+    dist[startpoint] = 0
 
+    #insert not with temp distance
+    for node in adjList:
+        heapq.heappush(pq, (node, dist[node]))
 
-    #adding edges with weight
-    tempData = iter(f.read().split())
-    while True:
-        try:
-            toNode = next(tempData)
-            fromNode = next(tempData)
-            #weight is based on distance
-            weight = abs(int(toNode)-int(fromNode))
-            newEdge (toNode, fromNode, weight)
-        except StopIteration:
-            break
+    while len(pq) != 0:
+        curr, tempDist = heapq.heappop(pq)
+        for neighbor in adjList[curr]:
+            wt = adjList[curr][neighbor]
+            distance = tempDist + wt
+            if distance < dist[neighbor]:
+                dist[neighbor] = distance
+                heapq.heappush(pq, (neighbor, distance))
+                path[neighbor] = curr
+    return path, dist[endpoint]
 
 #shortest path defined above
 
@@ -169,11 +171,6 @@ def makeMinGraph():
         if j != k:
             listSets[j].union(listSets[k])
             minEdgeList.add(triple)
-
-
-
-
-
 
 #run at end of 'main'
 gui.mainloop()
