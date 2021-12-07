@@ -109,38 +109,38 @@ with file:
         toNode = int(nums[0])
         fromNode = int(nums[1])
         weight = abs(fromNode - toNode)
-        tempList = [toNode, weight]
+        tempList1 = [toNode, weight]
+        tempList2 = [fromNode, weight]
         if fromNode not in adjList:
             adjList[fromNode] = []
-        adjList[fromNode].append(tempList)
+        if toNode not in adjList:
+            adjList[toNode] = []
+        adjList[fromNode].append(tempList1)
+        adjList[toNode].append(tempList2)
 
-#TODO: Dijkstra's Algorithm: return list verts w/ weight
-def dijkstra (adjList, startpoint, endpoint):
-    path = {}
-    dist = {}
-    pq = []
+#Dijkstra's Algorithm: return list verts w/ weight
+def dijkstra (adjList, startpoint):
+    dist = [999999999999] * len(adjList) #hardcoded Infinity value need to change
+    dist[startpoint - 1] = 0 #list starts from 1 not 0
+    dijMatrix = dict()
+    path = {startpoint : 0}
+    while path:
+        currNode = min(path, key = lambda k: path[k])
+        del path[currNode]
+        for node in adjList[currNode]:
+            #temp = adjList[key]
+            adjacent = node[0]
+            adjLength = node[1]
+            #relaxation
+            if dist[adjacent - 1] > dist[currNode - 1] + adjLength:
+                dist[adjacent - 1] = dist[currNode - 1] + adjLength
+                path[adjacent - 1] = dist[adjacent - 1]
+    count = 1
+    for i in dist:
+        dijMatrix[count] = i
+        count += 1
+    return dijMatrix #returns (k, v) of (node, shortest dist)
 
-    #update distance to INF and prev Node to None (-1)
-    for node in adjList:
-        dist[node] = float(sys.maxsize)
-        path[node] = None
-
-    dist[startpoint] = 0
-
-    #insert not with temp distance
-    for node in adjList:
-        heapq.heappush(pq, (node, dist[node]))
-
-    while len(pq) != 0:
-        curr, tempDist = heapq.heappop(pq)
-        for neighbor in adjList[curr]:
-            wt = adjList[curr][neighbor]
-            distance = tempDist + wt
-            if distance < dist[neighbor]:
-                dist[neighbor] = distance
-                heapq.heappush(pq, (neighbor, distance))
-                path[neighbor] = curr
-    return path, dist[endpoint]
 
 #shortest path defined above
 
