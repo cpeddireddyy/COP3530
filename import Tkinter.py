@@ -162,14 +162,13 @@ with file:
         tempEdgeList = [fromNode, toNode, weight]
         edgeList.append(tempEdgeList)
         #makes adjList for s-t path
-        tempList = [toNode, weight]
         tempList1 = [toNode, weight]
         tempList2 = [fromNode, weight]
         if fromNode not in adjList:
             adjList[fromNode] = []
         if toNode not in adjList:
             adjList[toNode] = []
-        adjList[fromNode].append(tempList)
+        adjList[fromNode].append(tempList1)
 print(len(adjList))
  #making min span tree
 sorted(edgeList, key=lambda edge: edge[2])
