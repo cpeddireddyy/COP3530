@@ -5,37 +5,85 @@ import heapq
 
 #must install  pillow, and tkinter
 
-nextNode = "---"
-distLeft = "---"
-useMinTree = False
-def startNav():
-    #shortest path s-t
-    #redisplay path
-    startpoint = (int)(start_entry.get()) #gets origin 
-    endpoint = (int)(end_entry.get()) #gets destination
-    nextNode = startpoint
-    distLeft = endpoint - startpoint
-    dist_label["text"] = distLeft
-    nextstopNode_label["text"] = nextNode
-    #calculate shortest path and makes queue to read directions for
 
-def toggleMinTree():
-    global useMinTree
-    useMinTree = not (useMinTree)
-    if (useMinTree):
+currentPath = []
+currentVertex = 0
+distLeft = 0
+lastVertex = 0
+useMinGraph = False
+
+#calls dijkstras then updates currentPath for accessing data
+def startNav():
+    global minAdjList, adjList, currentPath
+    try:
+        startpoint = (int)(start_entry.get()) #gets origin 
+        endpoint = (int)(end_entry.get()) #gets destination
+    except:
+        print("Bad input")
+        dist_label["text"] = "---"
+        nextstopNode_label["text"] = "---"
+        return
+    if(useMinGraph):
+        currentPath = dijkstra(minAdjList, startpoint, endpoint)
+    else:
+        curentPath = dijkstra(minAdjList, startpoint, endpoint)
+    currentVertex = 0
+    lastVertex = len(curentPath)-1
+    dist_label["text"] = str(distLeft)
+    nextstopNode_label["text"] = currentPath[1]
+
+#used as binary toggle as to use mingraph or regular graph
+def toggleMinGraph():
+    global useMinGraph, currentPath
+    dist_label["text"] = "---"
+    nextstopNode_label["text"] = "---"
+    currentPath = []
+    useMinGraph = not (useMinGraph)
+    if (useMinGraph):
         Min_button["text"] = "True"
     else:
         Min_button["text"] = "False"
 
-    
-
+#when each step function is called, move currentVertex up that many and updated display
 def step1():
+    global currentPath, currentVertex, lastVertex
+    currentVertex = max(currentVertex+1, lastVertex)
+    if(currentVertex == lastVertex):
+        dist_label["text"] = "0 miles"
+        nextstopNode_label["text"] = "Destination Reached"
+    else:
+        dist_label["text"] = distLeft
+        nextstopNode_label["text"] = currentPath[currentVertex]
     print("step 1")
 def step10():
+    global currentPath, currentVertex, lastVertex
+    currentVertex = max(currentVertex+10, lastVertex)
+    if(currentVertex == lastVertex):
+        dist_label["text"] = "0 miles"
+        nextstopNode_label["text"] = "Destination Reached"
+    else:
+        dist_label["text"] = distLeft
+        nextstopNode_label["text"] = currentPath[currentVertex]
     print("step 10")
 def step100():
+    global currentPath, currentVertex, lastVertex
+    currentVertex = max(currentVertex+100, lastVertex)
+    if(currentVertex == lastVertex):
+        dist_label["text"] = "0 miles"
+        nextstopNode_label["text"] = "Destination Reached"
+    else:
+        dist_label["text"] = distLeft
+        nextstopNode_label["text"] = currentPath[currentVertex]
     print("step 100")
 def step1000():
+    global currentPath, currentVertex, lastVertex
+    currentVertex = max(currentVertex+1000, lastVertex)
+    if(currentVertex == lastVertex):
+        dist_label["text"] = "0 miles"
+        nextstopNode_label["text"] = "Destination Reached"
+    else:
+        dist_label["text"] = distLeft
+        nextstopNode_label["text"] = currentPath[currentVertex]
     print("step 1000")
 
 #makes window
@@ -87,20 +135,21 @@ nextstop_label = Label(gui, text="Next stop: ", bg="#e33939", font=("Courier", 2
 nextstop_label.place(x=630, y=20)
 distleft_label = Label(gui, text="Distance Left:", bg="#e33939", font=("Courier", 26), width= 16)
 distleft_label.place(x=630, y=500)
-nextstopNode_label = Label(gui, text=nextNode, bg="#e33939", font=("Courier", 26), width= 12)
+nextstopNode_label = Label(gui, text="---", bg="#e33939", font=("Courier", 26), width= 12)
 nextstopNode_label.place(x=940, y=20)
-dist_label = Label(gui, text=distLeft, bg="#e33939", font=("Courier", 26), width= 12)
+dist_label = Label(gui, text="---", bg="#e33939", font=("Courier", 26), width= 12)
 dist_label.place(x=940, y=500)
 bulldoze_label = Label(gui, text="Any road that makes a cycle in the roadnetwork\nis \'unnecessary\' as that means there are two routes\nto get to the same destination. Click to\ntoggle map if all unnecessary roads are\nbulldozed then restart navigation. (Min. spanning tree)", bg="#e33939", font=("Courier", 10), width= 55, height= 5)
 bulldoze_label.place(x=630, y=560)
-Min_button = Button(gui, command = toggleMinTree, text ="False" ,font=("Courier", 22), bg="#61aaed", width = 6, height = 2)
+Min_button = Button(gui, command = toggleMinGraph, text ="False" ,font=("Courier", 22), bg="#61aaed", width = 6, height = 2)
 Min_button.place(x=1085, y=560)
 
 #parsing data
-file = open("road-usroads-test.mtx", "r")      #using test file
+file = open("road-usroads.mtx", "r")      #using test file
 #storing tree (adjacency list bc sparse)
 #class
 adjList = dict()
+edgeList = []
 with file:
     for junk in range(15):
         next(file)
@@ -109,10 +158,61 @@ with file:
         toNode = int(nums[0])
         fromNode = int(nums[1])
         weight = abs(fromNode - toNode)
+        #makes edgeList for kruskals
+        tempEdgeList = [fromNode, toNode, weight]
+        edgeList.append(tempEdgeList)
+        #makes adjList for s-t path
         tempList = [toNode, weight]
         if fromNode not in adjList:
             adjList[fromNode] = []
+        if toNode not in adjList:
+            adjList[toNode] = []
         adjList[fromNode].append(tempList)
+print(len(adjList))
+ #making min span tree
+sorted(edgeList, key=lambda edge: edge[2])
+#credit to geeksforgeeks.org for explaining union by rank and path compression as a low time complexity for finding and unioning sets
+minAdjList = dict() #result graph
+setRoots = []    #holds 'parent' of each vertex, when vertex's parent is itself, it is the set's root
+heights = []  #holds "height" of each tree
+for i in range(len(adjList)+1):
+    heights.append(1)
+    setRoots.append(i)
+
+def find(vertex):   #determines the set that vertex belongs to
+    global setRoots, heights
+    if(setRoots[vertex] == vertex):
+        return vertex
+    setRoots[vertex] = find(setRoots[vertex])
+    heights[vertex] = 2
+    return setRoots[vertex]
+
+def union(src, dest):   #combines sets by making root of one the root of both
+    global setRoots, heights
+    srcRoot = find(src)
+    destRoot = find(dest)
+    if(heights[srcRoot] > heights[destRoot]):
+        setRoots[destRoot] = srcRoot
+    elif(heights[srcRoot] < heights[destRoot]):
+        setRoots[srcRoot] = destRoot
+    else:
+        setRoots[srcRoot] = destRoot
+        heights[destRoot] +=1
+
+index = 0
+edgeCount = 0
+while(edgeCount < len(adjList)-1 and index < len(edgeList)):  #go through each edge smallest to biggest adding to minAdjList if not making cycle until V-1 are added
+    src, dest, weight = edgeList[index]
+    index += 1
+    if(find(src) != find(dest)): #cycle isnt made so add to minAdjList
+        union(src, dest)
+        edgeCount += 1
+        tempList = [dest, weight]
+        if src not in minAdjList:
+            minAdjList[src] = []
+        if dest not in minAdjList:
+            minAdjList[dest] = []
+        minAdjList[src].append(tempList)
 
 #TODO: Dijkstra's Algorithm: return list verts w/ weight
 def dijkstra (adjList, startpoint, endpoint):
@@ -146,31 +246,9 @@ def dijkstra (adjList, startpoint, endpoint):
 
 #min span tree to make secondary tree for "bulldoze" mode
 print(len(adjList))
+print(len(minAdjList))
 
 
-#making the min spanning tree
-minEdgeList = set()
-def makeMinGraph():
-    #adjList = {fromNode:[[toNode,weight], [toNode, weight]], fromNode:[[toNode,weight], [toNode, weight]], fromNode:[[toNode,weight], [toNode, weight]]}
-    #first make list of edges (src, dest, weight)
-    edgeList = [] #form of [from, to, weight]
-    listSets = []
-    for fromNode in adjList:    #iterates through each List
-        listSets.append([fromNode])
-        for edgePair in adjList[fromNode]:  #iterates through each edge
-            #fromNode, edgePair = [toNode, weight]
-            edgeList.append([fromNode, edgePair[0], edgePair[1]])
-    sorted(edgeList, key=lambda edge: edge[2])
-    #union list of sets for cycle detection
-    for triple in edgeList:
-        for i in range(len(listSets)):
-            if triple[0] in listSets[i]:
-                j = i
-            if triple[1] in listSets[i]:
-                k = i
-        if j != k:
-            listSets[j].union(listSets[k])
-            minEdgeList.add(triple)
 
 #run at end of 'main'
 gui.mainloop()
