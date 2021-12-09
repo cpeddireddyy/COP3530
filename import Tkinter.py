@@ -216,12 +216,13 @@ while(edgeCount < len(adjList)-1 and index < len(edgeList)):  #go through each e
             minAdjList[dest] = []
         minAdjList[src].append(tempList)
 
-def dijkstra (adjList, startpoint):
+def dijkstra (adjList, startpoint, endpoint):
 
     dist = [999999999999] * len(adjList) #hardcoded Infinity value need to change
     dist[startpoint - 1] = 0 #list starts from 1 not 0
     path = {startpoint : 0}
     dijMatrix = dict()
+    pred = [-1] * len(adjList)
     while path:
         currNode = min(path, key = lambda k: path[k])
         del path[currNode]
@@ -230,9 +231,31 @@ def dijkstra (adjList, startpoint):
             adjLength = node[1]
             #relaxation
             if dist[adjacent - 1] > dist[currNode - 1] + adjLength:
-                dist[adjacent - 1] = dist[currNode - 1] + adjLength
+                dist[adjacent - 1] = adjLength
                 path[adjacent] = dist[adjacent - 1]
-    dist = currentPath #updates currentpath w/ verts
+                pred[adjacent - 1] = adjacent
+    #list of vert from end to start
+    currentPath = []
+    distLeft = []
+    disconnect = False
+
+    try:
+        if pred[endpoint - 1] != -1:
+            currentPath = pred[startpoint: endpoint]
+            distLeft = dist[startpoint: endpoint]
+        else:
+            currentPath = [-1]
+            disconnect = True
+    #condition for disconnected graph
+    except IndexError:
+        currentPath = [-1]
+        disconnect = True
+    if not disconnect:
+        currentPath.remove(-1)
+        distLeft.remove(999999999999)
+    currentPath.reverse()
+    distLeft.reverse()
+
 
 #shortest path defined above
 
