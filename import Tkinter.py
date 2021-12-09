@@ -6,7 +6,7 @@ import heapq
 #must install  pillow, and tkinter
 
 
-currentPath = []
+currentPath = list()
 currentVertex = 0
 distLeft = 0
 lastVertex = 0
@@ -14,7 +14,7 @@ useMinGraph = False
 
 #calls dijkstras then updates currentPath for accessing data
 def startNav():
-    global minAdjList, adjList, currentPath
+    global minAdjList, adjList, currentPath, lastVertex, currentVertex
     try:
         startpoint = (int)(start_entry.get()) #gets origin
         endpoint = (int)(end_entry.get()) #gets destination
@@ -26,7 +26,7 @@ def startNav():
     if(useMinGraph):
         currentPath = dijkstra(minAdjList, startpoint)
     else:
-        curentPath = dijkstra(minAdjList, startpoint)
+        curentPath = dijkstra(adjList, startpoint)
     currentVertex = 0
     lastVertex = len(curentPath)-1
     dist_label["text"] = str(distLeft)
