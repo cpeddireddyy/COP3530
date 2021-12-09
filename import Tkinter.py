@@ -9,12 +9,12 @@ import heapq
 currentPath = list()
 currentVertexIndex = 0
 distLeft = list()
-lastVertexndex = 0
+lastVertexIndex = 0
 useMinGraph = False
 
 #calls dijkstras then updates currentPath for accessing data
 def startNav():
-    global minAdjList, adjList, currentPath, lastVertex, currentVertex
+    global minAdjList, adjList, currentPath, lastVertexIndex, currentVertexIndex
     try:
         startpoint = (int)(start_entry.get()) #gets origin
         endpoint = (int)(end_entry.get()) #gets destination
@@ -24,16 +24,16 @@ def startNav():
         nextstopNode_label["text"] = "---"
         return
     if(useMinGraph):
-        currentPath = dijkstra(minAdjList, startpoint, endpoint)
+        dijkstra(minAdjList, startpoint, endpoint)
     else:
-        curentPath = dijkstra(adjList, startpoint, endpoint)
-    currentVertex = 0
-    lastVertex = len(currentPath) - 1
+        dijkstra(adjList, startpoint, endpoint)
+    currentVertexIndex = 0
+    lastVertexIndex = len(currentPath) - 1
     if(currentPath[0] == -1):
         dist_label["text"] = "No path"
         nextstopNode_label["text"] = "No path"
     else:
-        dist_label["text"] = str(distLeft)
+        dist_label["text"] = str(distLeft[0])
         nextstopNode_label["text"] = currentPath[1]
 
 #used as binary toggle as to use mingraph or regular graph
@@ -48,46 +48,49 @@ def toggleMinGraph():
     else:
         Min_button["text"] = "False"
 
-#when each step function is called, move currentVertex up that many and updated display
+#when each step function is called, move currentVertexIndex up that many and updated display
 def step1():
-    global currentPath, currentVertex, lastVertex
-    currentVertex = max(currentVertex+1, lastVertex)
-    if(currentVertex == lastVertex):
+    global currentPath, currentVertexIndex, lastVertexIndex
+    currentVertexIndex = min(currentVertexIndex+1, lastVertexIndex)
+    if(currentVertexIndex == lastVertexIndex):
         dist_label["text"] = "0 miles"
-        nextstopNode_label["text"] = "Destination Reached"
+        nextstopNode_label["text"] = "Arrived"
     else:
-        dist_label["text"] = distLeft
-        nextstopNode_label["text"] = currentPath[currentVertex]
+        dist_label["text"] = str(distLeft[currentVertexIndex+1]) + " miles"
+        nextstopNode_label["text"] = str(currentPath[currentVertexIndex])
+    if(currentPath[0] == -1):
+        dist_label["text"] = "No path"
+        nextstopNode_label["text"] = "No path"
     print("step 1")
 def step10():
-    global currentPath, currentVertex, lastVertex
-    currentVertex = max(currentVertex+10, lastVertex)
-    if(currentVertex == lastVertex):
+    global currentPath, currentVertexIndex, lastVertexIndex
+    currentVertexIndex = min(currentVertexIndex+10, lastVertexIndex)
+    if(currentVertexIndex == lastVertexIndex):
         dist_label["text"] = "0 miles"
-        nextstopNode_label["text"] = "Destination Reached"
+        nextstopNode_label["text"] = "Arrived"
     else:
-        dist_label["text"] = distLeft
-        nextstopNode_label["text"] = currentPath[currentVertex]
+        dist_label["text"] = str(distLeft[currentVertexIndex+1]) + " miles"
+        nextstopNode_label["text"] = str(currentPath[currentVertexIndex])
     print("step 10")
 def step100():
-    global currentPath, currentVertex, lastVertex
-    currentVertex = max(currentVertex+100, lastVertex)
-    if(currentVertex == lastVertex):
+    global currentPath, currentVertexIndex, lastVertexIndex
+    currentVertexIndex = min(currentVertexIndex+100, lastVertexIndex)
+    if(currentVertexIndex == lastVertexIndex):
         dist_label["text"] = "0 miles"
-        nextstopNode_label["text"] = "Destination Reached"
+        nextstopNode_label["text"] = "Arrived"
     else:
-        dist_label["text"] = distLeft
-        nextstopNode_label["text"] = currentPath[currentVertex]
+        dist_label["text"] = str(distLeft[currentVertexIndex+1]) + " miles"
+        nextstopNode_label["text"] = str(currentPath[currentVertexIndex])
     print("step 100")
 def step1000():
-    global currentPath, currentVertex, lastVertex
-    currentVertex = max(currentVertex+1000, lastVertex)
-    if(currentVertex == lastVertex):
+    global currentPath, currentVertexIndex, lastVertexIndex
+    currentVertexIndex = min(currentVertexIndex+1000, lastVertexIndex)
+    if(currentVertexIndex == lastVertexIndex):
         dist_label["text"] = "0 miles"
-        nextstopNode_label["text"] = "Destination Reached"
+        nextstopNode_label["text"] = "Arrived"
     else:
-        dist_label["text"] = distLeft
-        nextstopNode_label["text"] = currentPath[currentVertex]
+        dist_label["text"] = str(distLeft[currentVertexIndex+1]) + " miles"
+        nextstopNode_label["text"] = str(currentPath[currentVertexIndex])
     print("step 1000")
 
 #makes window
