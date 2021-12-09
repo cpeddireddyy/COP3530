@@ -7,9 +7,9 @@ import heapq
 
 
 currentPath = list()
-currentVertex = 0
-distLeft = 0
-lastVertex = 0
+currentVertexIndex = 0
+distLeft = list()
+lastVertexndex = 0
 useMinGraph = False
 
 #calls dijkstras then updates currentPath for accessing data
@@ -24,13 +24,17 @@ def startNav():
         nextstopNode_label["text"] = "---"
         return
     if(useMinGraph):
-        currentPath = dijkstra(minAdjList, startpoint)
+        currentPath = dijkstra(minAdjList, startpoint, endpoint)
     else:
-        curentPath = dijkstra(adjList, startpoint)
+        curentPath = dijkstra(adjList, startpoint, endpoint)
     currentVertex = 0
-    lastVertex = len(curentPath)-1
-    dist_label["text"] = str(distLeft)
-    nextstopNode_label["text"] = currentPath[1]
+    lastVertex = len(currentPath) - 1
+    if(currentPath[0] == -1):
+        dist_label["text"] = "No path"
+        nextstopNode_label["text"] = "No path"
+    else:
+        dist_label["text"] = str(distLeft)
+        nextstopNode_label["text"] = currentPath[1]
 
 #used as binary toggle as to use mingraph or regular graph
 def toggleMinGraph():
@@ -217,7 +221,7 @@ while(edgeCount < len(adjList)-1 and index < len(edgeList)):  #go through each e
         minAdjList[src].append(tempList)
 
 def dijkstra (adjList, startpoint, endpoint):
-
+    global currentPath, distLeft
     dist = [999999999999] * len(adjList) #hardcoded Infinity value need to change
     dist[startpoint - 1] = 0 #list starts from 1 not 0
     path = {startpoint : 0}
@@ -243,6 +247,7 @@ def dijkstra (adjList, startpoint, endpoint):
         if pred[endpoint - 1] != -1:
             currentPath = pred[startpoint: endpoint]
             distLeft = dist[startpoint: endpoint]
+            disconnect = False
         else:
             currentPath = [-1]
             disconnect = True
@@ -250,7 +255,7 @@ def dijkstra (adjList, startpoint, endpoint):
     except IndexError:
         currentPath = [-1]
         disconnect = True
-    if not disconnect:
+    if disconnect:
         currentPath.remove(-1)
         distLeft.remove(999999999999)
     currentPath.reverse()
