@@ -239,9 +239,9 @@ def dijkstra (adjList, startpoint, endpoint):
             adjLength = node[1]
             #relaxation
             if dist[adjacent - 1] > dist[currNode - 1] + adjLength:
-                dist[adjacent - 1] = adjLength
+                dist[adjacent] = adjLength
                 path[adjacent] = dist[adjacent - 1]
-                pred[adjacent - 1] = adjacent
+                pred[adjacent] = currNode
     #list of vert from end to start
     currentPath = []
     distLeft = []
