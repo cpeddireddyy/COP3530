@@ -1,11 +1,9 @@
-import sys
 from tkinter import *
 from PIL import Image, ImageTk
 import heapq
-
 #must install  pillow, and tkinter
 
-
+#data to track path and graph to use
 currentPath = list()
 currentVertexIndex = 0
 distLeft = list()
@@ -23,6 +21,10 @@ def startNav():
         dist_label["text"] = "---"
         nextstopNode_label["text"] = "---"
         return
+    if startpoint == endpoint:
+        dist_label["text"] = "0 miles"
+        nextstopNode_label["text"] = "Arrived"
+        return
     if(useMinGraph):
         dijkstra(minAdjList, startpoint, endpoint)
     else:
@@ -33,8 +35,10 @@ def startNav():
         dist_label["text"] = "No path"
         nextstopNode_label["text"] = "No path"
     else:
-        dist_label["text"] = str(distLeft[currentVertexIndex]) + " miles"
+        dist_label["text"] = str(distLeft[currentVertexIndex]) + " mile(s)"
         nextstopNode_label["text"] = currentPath[currentVertexIndex+1]
+        print("Node: " + str(currentPath[currentVertexIndex]))
+        print("Node: " + str(currentPath[currentVertexIndex+1]))
 
 #used as binary toggle as to use mingraph or regular graph
 def toggleMinGraph():
@@ -51,66 +55,53 @@ def toggleMinGraph():
 #when each step function is called, move currentVertexIndex up that many and updated display
 def step1():
     global currentPath, currentVertexIndex, lastVertexIndex
-    if(currentPath[0] == -1):
-        dist_label["text"] = "No path"
-        nextstopNode_label["text"] = "No path"
+    currentVertexIndex = min(currentVertexIndex+1, lastVertexIndex)
+    if(currentVertexIndex == lastVertexIndex):
+        dist_label["text"] = "0 miles"
+        nextstopNode_label["text"] = "Arrived"
     else:
-        currentVertexIndex = min(currentVertexIndex+1, lastVertexIndex)
-        if(currentVertexIndex == lastVertexIndex):
-            dist_label["text"] = "0 miles"
-            nextstopNode_label["text"] = "Arrived"
-        else:
-            dist_label["text"] = str(distLeft[currentVertexIndex]) + " miles"
-            nextstopNode_label["text"] = str(currentPath[currentVertexIndex+1])
-    print("step 1")
+        dist_label["text"] = str(distLeft[currentVertexIndex]) + " mile(s)"
+        nextstopNode_label["text"] = str(currentPath[currentVertexIndex+1])
+        print("Node: " + str(currentPath[currentVertexIndex+1]))
+
 def step10():
     global currentPath, currentVertexIndex, lastVertexIndex
-    if(currentPath[0] == -1):
-        dist_label["text"] = "No path"
-        nextstopNode_label["text"] = "No path"
+    currentVertexIndex = min(currentVertexIndex+10, lastVertexIndex)
+    if(currentVertexIndex == lastVertexIndex):
+        dist_label["text"] = "0 miles"
+        nextstopNode_label["text"] = "Arrived"
     else:
-        currentVertexIndex = min(currentVertexIndex+10, lastVertexIndex)
-        if(currentVertexIndex == lastVertexIndex):
-            dist_label["text"] = "0 miles"
-            nextstopNode_label["text"] = "Arrived"
-        else:
-            dist_label["text"] = str(distLeft[currentVertexIndex+1]) + " miles"
-            nextstopNode_label["text"] = str(currentPath[currentVertexIndex])
-    print("step 10")
+        dist_label["text"] = str(distLeft[currentVertexIndex+1]) + " mile(s)"
+        nextstopNode_label["text"] = str(currentPath[currentVertexIndex])
+        print("Node: " + str(currentPath[currentVertexIndex+1]))
+
 def step100():
-    global currentPath, currentVertexIndex, lastVertexIndex
-    if(currentPath[0] == -1):
-        dist_label["text"] = "No path"
-        nextstopNode_label["text"] = "No path"
+    global currentPath, currentVertexIndex, lastVertexIndex  
+    currentVertexIndex = min(currentVertexIndex+100, lastVertexIndex)
+    if(currentVertexIndex == lastVertexIndex):
+        dist_label["text"] = "0 miles"
+        nextstopNode_label["text"] = "Arrived"
     else:
-        currentVertexIndex = min(currentVertexIndex+100, lastVertexIndex)
-        if(currentVertexIndex == lastVertexIndex):
-            dist_label["text"] = "0 miles"
-            nextstopNode_label["text"] = "Arrived"
-        else:
-            dist_label["text"] = str(distLeft[currentVertexIndex+1]) + " miles"
-            nextstopNode_label["text"] = str(currentPath[currentVertexIndex])
-    print("step 100")
+        dist_label["text"] = str(distLeft[currentVertexIndex+1]) + " mile(s)"
+        nextstopNode_label["text"] = str(currentPath[currentVertexIndex])
+        print("Node: " + str(currentPath[currentVertexIndex+1]))
+
 def step1000():
     global currentPath, currentVertexIndex, lastVertexIndex
-    if(currentPath[0] == -1):
-        dist_label["text"] = "No path"
-        nextstopNode_label["text"] = "No path"
+    currentVertexIndex = min(currentVertexIndex+1000, lastVertexIndex)
+    if(currentVertexIndex == lastVertexIndex):
+        dist_label["text"] = "0 miles"
+        nextstopNode_label["text"] = "Arrived"
     else:
-        currentVertexIndex = min(currentVertexIndex+1000, lastVertexIndex)
-        if(currentVertexIndex == lastVertexIndex):
-            dist_label["text"] = "0 miles"
-            nextstopNode_label["text"] = "Arrived"
-        else:
-            dist_label["text"] = str(distLeft[currentVertexIndex+1]) + " miles"
-            nextstopNode_label["text"] = str(currentPath[currentVertexIndex])
-    print("step 1000")
+        dist_label["text"] = str(distLeft[currentVertexIndex+1]) + " mile(s)"
+        nextstopNode_label["text"] = str(currentPath[currentVertexIndex])
+        print("Node: " + str(currentPath[currentVertexIndex+1]))
 
-#makes window
+#makes gui
 gui = Tk(className = "iMaps - COP3530 Graph Project---Evan & Chaitra")
 gui.geometry("1280x720")
 # each label, button, and text entry box left side screen
-descript_label = Label(gui, text = "Welcome to iMaps created by Evan & Chaitra!\nThis navigation app uses a road network of\nthe United States and gives the fastest route\nfrom any two points. Enter a location\n(number 1-129163) to start and end navigation\nthen click \"Start Navigation\". Step through\neach direction using the buttons below.", bg="#e33939", font=("Courier", 16), width = 46, height = 9)
+descript_label = Label(gui, text = "Welcome to iMaps, created by Evan & Chaitra!\nThis navigation app uses a road network of\nthe United States and gives the fastest route\nfrom any two points. Enter a location\n(number 1-129163) to start and end navigation\nthen click \"Start Navigation\". Step through\neach direction using the buttons below.", bg="#e33939", font=("Courier", 16), width = 46, height = 9)
 descript_label.place(x=20, y=20)
 
 start_label = Label(gui, text="Origin", bg="#e33939", font=("Courier", 22), width= 16)
@@ -164,16 +155,18 @@ bulldoze_label.place(x=630, y=560)
 Min_button = Button(gui, command = toggleMinGraph, text ="False" ,font=("Courier", 22), bg="#61aaed", width = 6, height = 2)
 Min_button.place(x=1085, y=560)
 
+
+
+
 #parsing data
 file = open("road-usroads.mtx", "r")      #using test file
 #storing tree (adjacency list bc sparse)
-#class
 adjList = dict()
 edgeList = []
 with file:
     for junk in range(15):
         next(file)
-    for line in file:
+    for line in file:           #creates adjacencylist and edgelist for kruskals
         nums = line.split()
         toNode = int(nums[0])
         fromNode = int(nums[1])
@@ -190,10 +183,9 @@ with file:
             adjList[toNode] = []
         adjList[fromNode].append(tempList1)
         adjList[toNode].append(tempList2)
- #making min span tree
+ #making min span tree----------credit to geeksforgeeks.org for explaining union by rank and path compression as a low time complexity for finding and unioning sets
 sorted(edgeList, key=lambda edge: edge[2])
-#credit to geeksforgeeks.org for explaining union by rank and path compression as a low time complexity for finding and unioning sets
-minAdjList = dict() #result graph
+minAdjList = dict() #result min spanning graph
 setRoots = []    #holds 'parent' of each vertex, when vertex's parent is itself, it is the set's root
 heights = []  #holds "height" of each tree
 for i in range(len(adjList)+1):
@@ -272,15 +264,15 @@ def dijkstra (adjList, startpoint, endpoint):
 
     pathingIndex = endpoint
     currentPath.append(pathingIndex)
-    if pred[pathingIndex] != -1:
+    if pred[pathingIndex] != -1:    #only make path if there is a path start to end
         while pathingIndex != startpoint:
             distLeft.append(dist[pathingIndex])
             currentPath.append(pred[pathingIndex])
             pathingIndex = pred[pathingIndex]
         distLeft.append(0)
     else:
-        currentPath = [-1]
+        currentPath = [-1]  #case where there is no path, checks for this value in each stepthrough
         distLeft = [999999999999]
 
-#run at end of 'main'
+#loop for interface to run
 gui.mainloop()
