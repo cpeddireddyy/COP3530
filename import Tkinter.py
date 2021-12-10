@@ -33,8 +33,8 @@ def startNav():
         dist_label["text"] = "No path"
         nextstopNode_label["text"] = "No path"
     else:
-        dist_label["text"] = str(distLeft[0])
-        nextstopNode_label["text"] = currentPath[1]
+        dist_label["text"] = str(distLeft[currentVertexIndex]) + " miles"
+        nextstopNode_label["text"] = currentPath[currentVertexIndex+1]
 
 #used as binary toggle as to use mingraph or regular graph
 def toggleMinGraph():
@@ -60,8 +60,8 @@ def step1():
             dist_label["text"] = "0 miles"
             nextstopNode_label["text"] = "Arrived"
         else:
-            dist_label["text"] = str(distLeft[currentVertexIndex+1]) + " miles"
-            nextstopNode_label["text"] = str(currentPath[currentVertexIndex])
+            dist_label["text"] = str(distLeft[currentVertexIndex]) + " miles"
+            nextstopNode_label["text"] = str(currentPath[currentVertexIndex+1])
     print("step 1")
 def step10():
     global currentPath, currentVertexIndex, lastVertexIndex
@@ -190,7 +190,6 @@ with file:
             adjList[toNode] = []
         adjList[fromNode].append(tempList1)
         adjList[toNode].append(tempList2)
-print(len(adjList))
  #making min span tree
 sorted(edgeList, key=lambda edge: edge[2])
 #credit to geeksforgeeks.org for explaining union by rank and path compression as a low time complexity for finding and unioning sets
@@ -237,6 +236,12 @@ while(edgeCount < len(adjList)-1 and index < len(edgeList)):  #go through each e
             minAdjList[dest] = []
         minAdjList[src].append(tempList)
         minAdjList[dest].append(tempList2)
+Components = []
+for setss in setRoots:
+    if find(setss) not in Components:
+        Components.append(find(setss))
+print("Number of seperate components in road network: " + str(len(Components)))
+
 
 def dijkstra (adjList, startpoint, endpoint):
     global currentPath, distLeft
@@ -276,15 +281,6 @@ def dijkstra (adjList, startpoint, endpoint):
     else:
         currentPath = [-1]
         distLeft = [999999999999]
-
-
-#shortest path defined above
-
-#min span tree to make secondary tree for "bulldoze" mode
-print(len(adjList))
-print(len(minAdjList))
-
-
 
 #run at end of 'main'
 gui.mainloop()
