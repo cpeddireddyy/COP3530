@@ -17,7 +17,17 @@ def startNav():
     global minAdjList, adjList, currentPath, lastVertexIndex, currentVertexIndex
     try:
         startpoint = (int)(start_entry.get()) #gets origin
-        endpoint = (int)(end_entry.get()) #gets destination
+        endpoint = (int)(end_entry.get())  # gets destination
+        if startpoint < 0 or endpoint < 0:
+            print("Enter Positive Number")
+            dist_label["text"] = "---"
+            nextstopNode_label["text"] = "---"
+            return
+        if startpoint > 129163 or endpoint > 129163:
+            print("Out of Range")
+            dist_label["text"] = "---"
+            nextstopNode_label["text"] = "---"
+            return
     except:
         print("Bad input")
         dist_label["text"] = "---"
