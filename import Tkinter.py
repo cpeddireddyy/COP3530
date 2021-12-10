@@ -239,14 +239,13 @@ def dijkstra (adjList, startpoint, endpoint):
             adjLength = node[1]
             #relaxation
             if dist[adjacent - 1] > dist[currNode - 1] + adjLength:
-                dist[adjacent] = adjLength
+                dist[adjacent -1] = adjLength
                 path[adjacent] = dist[adjacent - 1]
-                pred[adjacent] = currNode
+                pred[adjacent -1] = currNode
     #list of vert from end to start
     currentPath = []
     distLeft = []
     disconnect = False
-
     try:
         if pred[endpoint - 1] != -1:
             currentPath = pred[startpoint: endpoint]
@@ -264,7 +263,9 @@ def dijkstra (adjList, startpoint, endpoint):
             currentPath.remove(-1)
         if 999999999999 in distLeft:
             distLeft.remove(999999999999)
-    currentPath.reverse()
+    currentPath.reverse() #going backwards from end to source node (last value of list/ comment out if other way)
+    #for i in currentPath:
+        #print(i)
     distLeft.reverse()
 
 
