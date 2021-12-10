@@ -228,7 +228,7 @@ while(edgeCount < len(adjList)-1 and index < len(edgeList)):  #go through each e
 def dijkstra (adjList, startpoint, endpoint):
     global currentPath, distLeft
     dist = [999999999999] * len(adjList) #hardcoded Infinity value need to change
-    dist[startpoint - 1] = 0 #list starts from 1 not 0
+    dist[startpoint] = 0 #list starts from 1 not 0
     path = {startpoint : 0}
     pred = [-1] * len(adjList)
     while path:
@@ -238,10 +238,12 @@ def dijkstra (adjList, startpoint, endpoint):
             adjacent = node[0]
             adjLength = node[1]
             #relaxation
-            if dist[adjacent - 1] > dist[currNode - 1] + adjLength:
-                dist[adjacent -1] = adjLength
-                path[adjacent] = dist[adjacent - 1]
-                pred[adjacent -1] = currNode
+            if dist[adjacent] > dist[currNode] + adjLength:
+                dist[adjacent] = adjLength
+                path[adjacent] = dist[adjacent]
+                pred[adjacent] = currNode
+            if adjacent == endpoint:
+                break
     #list of vert from end to start
     currentPath = []
     distLeft = []
