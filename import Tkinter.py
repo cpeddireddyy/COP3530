@@ -28,7 +28,7 @@ def startNav():
     else:
         dijkstra(adjList, startpoint, endpoint)
     currentVertexIndex = 0
-    lastVertexIndex = len(currentPath) - 1
+    lastVertexIndex = len(currentPath)-1
     if(currentPath[0] == -1):
         dist_label["text"] = "No path"
         nextstopNode_label["text"] = "No path"
@@ -51,46 +51,59 @@ def toggleMinGraph():
 #when each step function is called, move currentVertexIndex up that many and updated display
 def step1():
     global currentPath, currentVertexIndex, lastVertexIndex
-    currentVertexIndex = min(currentVertexIndex+1, lastVertexIndex)
-    if(currentVertexIndex == lastVertexIndex):
-        dist_label["text"] = "0 miles"
-        nextstopNode_label["text"] = "Arrived"
-    else:
-        dist_label["text"] = str(distLeft[currentVertexIndex+1]) + " miles"
-        nextstopNode_label["text"] = str(currentPath[currentVertexIndex])
     if(currentPath[0] == -1):
         dist_label["text"] = "No path"
         nextstopNode_label["text"] = "No path"
+    else:
+        currentVertexIndex = min(currentVertexIndex+1, lastVertexIndex)
+        if(currentVertexIndex == lastVertexIndex):
+            dist_label["text"] = "0 miles"
+            nextstopNode_label["text"] = "Arrived"
+        else:
+            dist_label["text"] = str(distLeft[currentVertexIndex+1]) + " miles"
+            nextstopNode_label["text"] = str(currentPath[currentVertexIndex])
     print("step 1")
 def step10():
     global currentPath, currentVertexIndex, lastVertexIndex
-    currentVertexIndex = min(currentVertexIndex+10, lastVertexIndex)
-    if(currentVertexIndex == lastVertexIndex):
-        dist_label["text"] = "0 miles"
-        nextstopNode_label["text"] = "Arrived"
+    if(currentPath[0] == -1):
+        dist_label["text"] = "No path"
+        nextstopNode_label["text"] = "No path"
     else:
-        dist_label["text"] = str(distLeft[currentVertexIndex+1]) + " miles"
-        nextstopNode_label["text"] = str(currentPath[currentVertexIndex])
+        currentVertexIndex = min(currentVertexIndex+10, lastVertexIndex)
+        if(currentVertexIndex == lastVertexIndex):
+            dist_label["text"] = "0 miles"
+            nextstopNode_label["text"] = "Arrived"
+        else:
+            dist_label["text"] = str(distLeft[currentVertexIndex+1]) + " miles"
+            nextstopNode_label["text"] = str(currentPath[currentVertexIndex])
     print("step 10")
 def step100():
     global currentPath, currentVertexIndex, lastVertexIndex
-    currentVertexIndex = min(currentVertexIndex+100, lastVertexIndex)
-    if(currentVertexIndex == lastVertexIndex):
-        dist_label["text"] = "0 miles"
-        nextstopNode_label["text"] = "Arrived"
+    if(currentPath[0] == -1):
+        dist_label["text"] = "No path"
+        nextstopNode_label["text"] = "No path"
     else:
-        dist_label["text"] = str(distLeft[currentVertexIndex+1]) + " miles"
-        nextstopNode_label["text"] = str(currentPath[currentVertexIndex])
+        currentVertexIndex = min(currentVertexIndex+100, lastVertexIndex)
+        if(currentVertexIndex == lastVertexIndex):
+            dist_label["text"] = "0 miles"
+            nextstopNode_label["text"] = "Arrived"
+        else:
+            dist_label["text"] = str(distLeft[currentVertexIndex+1]) + " miles"
+            nextstopNode_label["text"] = str(currentPath[currentVertexIndex])
     print("step 100")
 def step1000():
     global currentPath, currentVertexIndex, lastVertexIndex
-    currentVertexIndex = min(currentVertexIndex+1000, lastVertexIndex)
-    if(currentVertexIndex == lastVertexIndex):
-        dist_label["text"] = "0 miles"
-        nextstopNode_label["text"] = "Arrived"
+    if(currentPath[0] == -1):
+        dist_label["text"] = "No path"
+        nextstopNode_label["text"] = "No path"
     else:
-        dist_label["text"] = str(distLeft[currentVertexIndex+1]) + " miles"
-        nextstopNode_label["text"] = str(currentPath[currentVertexIndex])
+        currentVertexIndex = min(currentVertexIndex+1000, lastVertexIndex)
+        if(currentVertexIndex == lastVertexIndex):
+            dist_label["text"] = "0 miles"
+            nextstopNode_label["text"] = "Arrived"
+        else:
+            dist_label["text"] = str(distLeft[currentVertexIndex+1]) + " miles"
+            nextstopNode_label["text"] = str(currentPath[currentVertexIndex])
     print("step 1000")
 
 #makes window
@@ -231,7 +244,9 @@ def dijkstra (adjList, startpoint, endpoint):
     dist[startpoint] = 0 #list starts from 1 not 0
     path = {startpoint : 0}
     pred = [-1] * len(adjList)
-    while path:
+    pred[startpoint] = startpoint
+    reached = False
+    while path and not reached:
         currNode = min(path, key = lambda k: path[k])
         del path[currNode]
         for node in adjList[currNode]:
@@ -239,36 +254,28 @@ def dijkstra (adjList, startpoint, endpoint):
             adjLength = node[1]
             #relaxation
             if dist[adjacent] > dist[currNode] + adjLength:
-                dist[adjacent] = adjLength
+                dist[adjacent] = adjLength + dist[currNode]
                 path[adjacent] = dist[adjacent]
                 pred[adjacent] = currNode
             if adjacent == endpoint:
+                reached = True
                 break
     #list of vert from end to start
     currentPath = []
     distLeft = []
-    disconnect = False
-    try:
-        if pred[endpoint - 1] != -1:
-            currentPath = pred[startpoint: endpoint]
-            distLeft = dist[startpoint: endpoint]
-            disconnect = False
-        else:
-            currentPath = [-1]
-            disconnect = True
-    #condition for disconnected graph
-    except IndexError:
+    #figure out path
+
+    pathingIndex = endpoint
+    currentPath.append(pathingIndex)
+    if pred[pathingIndex] != -1:
+        while pathingIndex != startpoint:
+            distLeft.append(dist[pathingIndex])
+            currentPath.append(pred[pathingIndex])
+            pathingIndex = pred[pathingIndex]
+        distLeft.append(0)
+    else:
         currentPath = [-1]
-        disconnect = True
-    if not disconnect:
-        if -1 in currentPath:
-            currentPath.remove(-1)
-        if 999999999999 in distLeft:
-            distLeft.remove(999999999999)
-    currentPath.reverse() #going backwards from end to source node (last value of list/ comment out if other way)
-    #for i in currentPath:
-        #print(i)
-    distLeft.reverse()
+        distLeft = [999999999999]
 
 
 #shortest path defined above
