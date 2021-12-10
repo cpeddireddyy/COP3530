@@ -217,11 +217,13 @@ while(edgeCount < len(adjList)-1 and index < len(edgeList)):  #go through each e
         union(src, dest)
         edgeCount += 1
         tempList = [dest, weight]
+        tempList2 = [src, weight]
         if src not in minAdjList:
             minAdjList[src] = []
         if dest not in minAdjList:
             minAdjList[dest] = []
         minAdjList[src].append(tempList)
+        minAdjList[dest].append(tempList2)
 
 def dijkstra (adjList, startpoint, endpoint):
     global currentPath, distLeft
