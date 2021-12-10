@@ -230,7 +230,6 @@ def dijkstra (adjList, startpoint, endpoint):
     dist = [999999999999] * len(adjList) #hardcoded Infinity value need to change
     dist[startpoint - 1] = 0 #list starts from 1 not 0
     path = {startpoint : 0}
-    dijMatrix = dict()
     pred = [-1] * len(adjList)
     while path:
         currNode = min(path, key = lambda k: path[k])
@@ -260,9 +259,11 @@ def dijkstra (adjList, startpoint, endpoint):
     except IndexError:
         currentPath = [-1]
         disconnect = True
-    if disconnect:
-        currentPath.remove(-1)
-        distLeft.remove(999999999999)
+    if not disconnect:
+        if -1 in currentPath:
+            currentPath.remove(-1)
+        if 999999999999 in distLeft:
+            distLeft.remove(999999999999)
     currentPath.reverse()
     distLeft.reverse()
 
